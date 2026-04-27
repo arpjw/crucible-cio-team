@@ -431,22 +431,27 @@ cd crucible-cio-team
 npm install -g @anthropic-ai/claude-code
 ```
 
-**3. Populate your context files**
-
-Fill in these three files with your fund's actual parameters before first use. The agents are only as good as the context you give them.
-
-- `context/fund-mandate.md` — permitted instruments, geographies, strategies, liquidity terms
-- `context/risk-limits.md` — leverage, VaR, drawdown, concentration, and regulatory limits
-- `context/portfolio-state.md` — current NAV, open positions, active signals, risk clusters
-
-**4. Open Claude Code**
+**3. Open Claude Code and run `/setup`**
 ```bash
 claude
 ```
-
-**5. Run your first review**
 ```
-/crucible Long EUR/USD via June futures, 2% NAV risk, thesis is ECB-Fed policy divergence widening through Q3
+/setup
+```
+
+`/setup` is a structured five-stage interview — Fund Identity, Strategy, Risk Parameters, Operations, and Regulatory. It takes about ten minutes and writes three things:
+
+- **Context files** — `context/fund-mandate.md`, `context/risk-limits.md`, `context/portfolio-state.md` fully populated with your fund's actual parameters (no placeholders)
+- **`SETUP_REPORT.md`** — one-page fund summary plus three appendices:
+  - Appendix A: Legal formation checklist tailored to your jurisdiction (Delaware LLC / Cayman LP / other)
+  - Appendix B: Broker and vendor setup checklist tailored to your selections (IBKR, Bloomberg, Norgate, FRED, Kalshi)
+  - Appendix C: Day-by-day first-30-days outline
+
+Run `/setup` again any time your fund parameters change.
+
+**4. Run your first pipeline**
+```
+/run-pipeline Long EUR/USD via June futures, 2% NAV risk, thesis is ECB-Fed policy divergence widening through Q3
 ```
 
 ---
@@ -532,7 +537,8 @@ crucible-cio-team/
 │   └── roll-manager.md
 │
 ├── .claude/
-│   └── commands/                    # 31 slash commands
+│   └── commands/                    # 32 slash commands
+│       ├── setup.md                 # First-time setup — interactive fund onboarding wizard
 │       ├── run-pipeline.md          # Primary entry point — full pipeline orchestration
 │       │
 │       │   — Layer 0: Human Roles —

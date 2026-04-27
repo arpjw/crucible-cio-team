@@ -2,6 +2,16 @@
 
 An adversarial multi-agent framework for systematic fund managers. Thirty AI agents that challenge fund decisions before execution, modeled after the role structure of a systematic macro CTA — now with a full orchestration layer that chains agents together automatically.
 
+## First-Time Setup
+
+**New user? Run `/setup` first.** It conducts a structured five-stage interview — Fund Identity, Strategy, Risk Parameters, Operations, and Regulatory — and writes all three context files plus a `SETUP_REPORT.md` with a legal formation checklist, broker and vendor setup checklist, and a day-by-day first-30-days outline, all tailored to your specific answers. Takes about ten minutes. Nothing else works properly until the context files are populated.
+
+```
+/setup
+```
+
+Run `/setup` again any time your fund parameters change (new regulatory path, new prime broker, revised risk limits).
+
 ## Primary Entry Point — Orchestrated Pipeline
 
 For any operational decision (trade, signal, rebalance, roll), use `/run-pipeline` as the default entry point. The pipeline executes the full agent stack in the correct order, passes outputs between agents via the shared context bus, enforces hard gates (compliance and drawdown), and produces a unified Pipeline Report with the final actionable instruction.
@@ -131,7 +141,7 @@ context/              # Shared fund context (mandate, limits, portfolio state)
 
 ## Usage
 
-1. Update `context/` files with your fund's actual mandate, limits, and current portfolio state.
+1. Run `/setup` to populate all context files through the interactive onboarding interview. Do this before anything else — no agent works correctly until context files are populated.
 2. Use `/run-pipeline <decision>` as the primary entry point for any trade, signal, rebalance, or roll decision. The pipeline runs the full agent stack in the correct order and produces a unified Pipeline Report.
 3. Use individual agent slash commands for targeted diagnostic analysis outside the pipeline.
 
