@@ -447,7 +447,7 @@ claude
   - Appendix B: Broker and vendor setup checklist tailored to your selections (IBKR, Bloomberg, Norgate, FRED, Kalshi)
   - Appendix C: Day-by-day first-30-days outline
 
-Run `/setup` again any time your fund parameters change.
+Run `/setup` again any time your fund parameters change. After `/setup`, read `PLAYBOOK.md` for the day-zero to day-100 operational guide.
 
 **4. Run your first pipeline**
 ```
@@ -478,6 +478,7 @@ Run `/setup` again any time your fund parameters change.
 crucible-cio-team/
 ├── AGENTS.md                        # Complete agent registry — all 30 agents
 ├── CLAUDE.md                        # Project instructions
+├── PLAYBOOK.md                      # Day-zero to running fund operational guide
 ├── README.md                        # This file
 │
 ├── orchestrator/                    # Orchestration layer
