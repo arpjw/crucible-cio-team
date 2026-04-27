@@ -2,7 +2,7 @@
 
 **Adversarial AI for systematic fund managers.**
 
-Crucible is a 30-agent, 5-layer AI framework that challenges every fund decision before execution. It is not an assistant — it is an adversary. Five governance agents independently stress-test trades from compliance, risk, macro, signal, and systems perspectives, producing a binding panel verdict of GO, CONDITIONAL GO, or NO-GO. Ten operations agents run continuously to monitor drawdowns, data feeds, margin, NAV, and LP obligations. Four intelligence agents track regime state, positioning crowding, news sentiment, and earnings risk. Six research agents validate new signals from hypothesis through backtest spec, factor exposure, capacity, and decay. Five execution agents route orders, monitor slippage, reconcile positions, manage rolls, and generate rebalance trade lists. Every agent has explicit formulas, hard thresholds, and machine-readable output — not open-ended questions.
+Crucible is a 37-agent, 6-layer AI framework that challenges every fund decision before execution. It is not an assistant — it is an adversary. Five governance agents independently stress-test trades from compliance, risk, macro, signal, and systems perspectives, producing a binding panel verdict of GO, CONDITIONAL GO, or NO-GO. Ten operations agents run continuously to monitor drawdowns, data feeds, margin, NAV, and LP obligations. Four intelligence agents track regime state, positioning crowding, news sentiment, and earnings risk. Six research agents validate new signals from hypothesis through backtest spec, factor exposure, capacity, and decay. Five execution agents route orders, monitor slippage, reconcile positions, manage rolls, and generate rebalance trade lists. Every agent has explicit formulas, hard thresholds, and machine-readable output — not open-ended questions.
 
 ---
 
@@ -103,6 +103,18 @@ Halt behavior is enforced automatically — no manual stage skipping.
   ║   audit-logger gates every trade before Execution layer can proceed          ║
   ║   macro-scanner + kalshi-reader feed regime context to Macro Analyst         ║
   ╚══════════════════════════════════════════════════════════════════════════════╝
+
+  ╔══════════════════════════════════════════════════════════════════════════════╗
+  ║  LAYER 0 · HUMAN ROLES    institutional expertise, periodic fund audits     ║
+  ║                                                                              ║
+  ║   /quant-researcher      /infrastructure-auditor   /fund-accountant         ║
+  ║   /chief-risk-officer    /investor-relations        /general-counsel         ║
+  ║   /head-of-trading                                                           ║
+  ║                                                                              ║
+  ║   quant-researcher validates models that signal-researcher and risk rely on  ║
+  ║   chief-risk-officer produces Board Risk Report from the full portfolio      ║
+  ║   general-counsel monitors regulatory thresholds that compliance enforces    ║
+  ╚══════════════════════════════════════════════════════════════════════════════╝
 ```
 
 **Key cross-layer feeds:**
@@ -115,6 +127,18 @@ Halt behavior is enforced automatically — no manual stage skipping.
 ---
 
 ## The Agents
+
+### Layer 0 — Human Roles
+
+| Agent | Command | Function | Key Output |
+|---|---|---|---|
+| Quant Researcher | `/quant-researcher` | Validates model mathematics via Jarque-Bera, rolling parameter stability, deflated Sharpe, and Ljung-Box residual tests | `MODEL VERDICT: INVALID \| CONDITIONAL \| VALIDATED` |
+| Infrastructure Auditor | `/infrastructure-auditor` | Reviews race conditions, idempotency, dependency pinning, error handling, and engineering debt (0–100 score) | `INFRASTRUCTURE VERDICT: NOT READY \| CONDITIONAL \| PRODUCTION READY` |
+| Fund Accountant | `/fund-accountant` | Reconciles P&L to NAV change (±0.01%), verifies fee calculations against LPA, checks expense allocation, and assesses audit readiness | `ACCOUNTING VERDICT: AUDIT FAILURE \| REQUIRES REMEDIATION \| AUDIT READY` |
+| Chief Risk Officer | `/chief-risk-officer` | Computes portfolio VaR, runs five historical crisis stress tests, measures liquidation horizon vs. redemption notice, and produces board-ready RAG dashboard | `PORTFOLIO RISK STATUS: RED \| AMBER \| GREEN` |
+| Investor Relations | `/investor-relations` | Simulates LP DDQ, prepares quarterly call with top-5 questions, assesses capital raise readiness, audits LP communications, and scores redemption risk | `IR VERDICT: NOT READY \| CONDITIONAL \| IR READY` |
+| General Counsel | `/general-counsel` | Monitors regulatory exemption thresholds, scans pending rules, screens trades for sanctions/insider trading/manipulation risk, and reviews counterparty legal terms | `LEGAL VERDICT: LEGAL HOLD \| LEGAL REVIEW REQUIRED \| LEGAL CLEAR` |
+| Head of Trading | `/head-of-trading` | Scores brokers on IS/fill rate/latency/commissions, audits commission drag, assesses prime broker fit, reviews execution strategy against the square-root model, and identifies market structure risks | `EXECUTION VERDICT: RESTRUCTURE NEEDED \| REVIEW REQUIRED \| EXECUTION OPTIMIZED` |
 
 ### Layer 0 — Governance
 
@@ -456,7 +480,16 @@ crucible-cio-team/
 │   ├── context-bus.md               # Shared context bus schema
 │   └── halt-protocol.md             # Hard/soft halt definitions and override procedures
 │
-├── agents/                          # 30 agent persona definitions
+├── agents/                          # 37 agent persona definitions
+│   │
+│   │   — Layer 0: Human Roles —
+│   ├── quant-researcher.md
+│   ├── infrastructure-auditor.md
+│   ├── fund-accountant.md
+│   ├── chief-risk-officer.md
+│   ├── investor-relations.md
+│   ├── general-counsel.md
+│   ├── head-of-trading.md
 │   │
 │   │   — Layer 0: Governance —
 │   ├── compliance-officer.md
@@ -501,6 +534,16 @@ crucible-cio-team/
 ├── .claude/
 │   └── commands/                    # 31 slash commands
 │       ├── run-pipeline.md          # Primary entry point — full pipeline orchestration
+│       │
+│       │   — Layer 0: Human Roles —
+│       ├── quant-researcher.md
+│       ├── infrastructure-auditor.md
+│       ├── fund-accountant.md
+│       ├── chief-risk-officer.md
+│       ├── investor-relations.md
+│       ├── general-counsel.md
+│       ├── head-of-trading.md
+│       │
 │       ├── crucible.md              # Full panel meta-command (Layer 0)
 │       ├── compliance.md
 │       ├── risk.md

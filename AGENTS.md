@@ -1,6 +1,6 @@
 # Crucible CIO Team — Agent Registry
 
-30 agents across 5 layers. Each entry: invocation command, one-sentence function, and the exact verdict or stamp the agent produces.
+37 agents across 6 layers. Each entry: invocation command, one-sentence function, and the exact verdict or stamp the agent produces.
 
 ---
 
@@ -79,6 +79,22 @@ Order management and fill quality. These agents receive verdicts from Governance
 | Position Reconciler | `/position-reconciler` | Runs three-way reconciliation across broker, OMS, and signal register and flags breaks by type and severity. | `CLEAN \| BREAKS DETECTED`; `ORDER ROUTING GATE: CLEARED \| SUSPENDED` |
 | Rebalancer | `/rebalancer` | Generates the optimal trade list from Portfolio Optimizer targets, nets trades, sequences exits first, and flags uneconomic rebalances. | `REBALANCE APPROVED — FULL \| REBALANCE APPROVED — PARTIAL \| REBALANCE UNECONOMIC \| NO REBALANCE REQUIRED` |
 | Roll Manager | `/roll-manager` | Maintains a 90-day futures expiry calendar, monitors roll cost vs. 30-day average, and issues urgent roll alerts within 3 days of first notice. | `URGENT ROLL \| ROLL NOW \| ROLL COST ELEVATED` |
+
+---
+
+## Layer 0 — Human Roles
+
+Institutional expertise roles. These agents model the specialized knowledge domains that underpin fund operations — model validation, infrastructure quality, fund accounting, portfolio-wide risk, LP relationships, legal compliance, and execution management. Run for targeted domain reviews or as part of periodic fund audits. Not part of the pre-trade pipeline, but foundational to everything the pipeline depends on.
+
+| Agent | Command | Function | Key Output |
+|---|---|---|---|
+| Quant Researcher | `/quant-researcher` | Validates model mathematics: distributional assumptions (Jarque-Bera, kurtosis, skewness), theoretical pricing consistency, parameter stability via rolling estimation, overfitting via deflated Sharpe and SR_in/SR_out ratio, and factor model residual structure via Ljung-Box. | `MODEL VERDICT: INVALID \| CONDITIONAL \| VALIDATED` per model component |
+| Infrastructure Auditor | `/infrastructure-auditor` | Reviews code quality and engineering debt: race conditions on shared mutable state, idempotency of signal calculations, dependency version pinning, error handling coverage for every external call, and a 0–100 engineering debt score with prioritized remediation list. | `INFRASTRUCTURE VERDICT: NOT READY \| CONDITIONAL \| PRODUCTION READY` |
+| Fund Accountant | `/fund-accountant` | Runs full fund accounting: P&L attribution reconciled to NAV change within 0.01%, fee calculation against LPA (management fee, performance fee, HWM integrity), expense allocation (fund-borne vs. manager-borne), trial balance with double-entry check, and Big 4 audit readiness. | `ACCOUNTING VERDICT: AUDIT FAILURE \| REQUIRES REMEDIATION \| AUDIT READY` |
+| Chief Risk Officer | `/chief-risk-officer` | Portfolio-wide board-level risk: parametric and historical VaR at 95%/99%, five named historical crisis stress tests (GFC, COVID, 2022 Rate Shock, 1994 Bond Massacre, LTCM 1998), days-to-liquidate vs. redemption notice, stress-period correlation breakdown (ρ=0.85 floor), and Board Risk Report with RAG status per dimension. | `PORTFOLIO RISK STATUS: RED \| AMBER \| GREEN` |
+| Investor Relations | `/investor-relations` | LP relationship and capital raise: eight-section DDQ simulation with gap scoring, quarterly call preparation with top-5 LP questions and proactive disclosure flags, capital raise readiness (track record ≥12 months, ops, regulatory), LP communication audit (monthly NAV, quarterly letters, material changes), and redemption risk (LP concentration, notice vs. liquidity, gate adequacy). | `IR VERDICT: NOT READY \| CONDITIONAL \| IR READY` |
+| General Counsel | `/general-counsel` | Regulatory and legal risk: exemption filing currency and threshold monitoring (CPO 4.13(a)(3), IA registration), horizon scanning for SEC/CFTC/FCA/ESMA rules with >50% finalization probability, trade legal risk (sanctions, short sale compliance, insider trading, market manipulation), counterparty legal risk (ISDA termination events, margin acceleration, re-hypothecation), and litigation risk severity scoring. | `LEGAL VERDICT: LEGAL HOLD \| LEGAL REVIEW REQUIRED \| LEGAL CLEAR` |
+| Head of Trading | `/head-of-trading` | Execution quality and broker management: five-dimension broker scorecard (IS, fill rate, rejection rate, latency, commissions) with PREFERRED/ACCEPTABLE/REVIEW/TERMINATE verdict per broker, commission audit as % AUM and % gross P&L with benchmarks, prime broker fit assessment (financing rates, sec lending split, technology), execution strategy review against the square-root impact model (EXECUTION INEFFICIENCY at >30% excess), and market structure risk (fragmentation, rule changes, liquidity migration). | `EXECUTION VERDICT: RESTRUCTURE NEEDED \| REVIEW REQUIRED \| EXECUTION OPTIMIZED` |
 
 ---
 

@@ -50,6 +50,20 @@ Individual slash commands remain available for targeted analysis outside the pip
 
 Each agent is a skeptic, not an assistant. They exist to surface failure modes, not validate decisions. When you present a trade idea, signal, or portfolio change, the Crucible agents attack it from their domain.
 
+## Layer 0 — Human Roles
+
+Institutional expertise roles. Run for targeted domain reviews or periodic fund audits.
+
+| Agent | Slash Command | Domain |
+|---|---|---|
+| Quant Researcher | `/quant-researcher` | Model validation: distributional assumptions, pricing consistency, parameter stability, overfitting, factor model residuals |
+| Infrastructure Auditor | `/infrastructure-auditor` | Code quality: race conditions, idempotency, dependency pinning, error handling, debt scoring |
+| Fund Accountant | `/fund-accountant` | Fund accounting: P&L attribution, fee calculation, expense allocation, trial balance, audit readiness |
+| Chief Risk Officer | `/chief-risk-officer` | Portfolio-wide risk: VaR, historical crisis stress tests, liquidity, correlation breakdown, Board Risk Report |
+| Investor Relations | `/investor-relations` | LP relationships: DDQ simulation, quarterly call prep, capital raise readiness, communication audit, redemption risk |
+| General Counsel | `/general-counsel` | Legal and regulatory: exemption currency, horizon scanning, trade legal risk, counterparty agreements, litigation |
+| Head of Trading | `/head-of-trading` | Execution quality: broker scorecard, commission audit, prime broker fit, execution strategy, market structure risk |
+
 ## Layer 0 — Decision Review Agents
 
 | Agent | Slash Command | Domain |
