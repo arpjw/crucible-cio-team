@@ -1,6 +1,50 @@
 # Crucible CIO Team
 
-An adversarial multi-agent framework for systematic fund managers. Five AI agents that challenge fund decisions before execution, modeled after the role structure of a systematic macro CTA.
+An adversarial multi-agent framework for systematic fund managers. Thirty AI agents that challenge fund decisions before execution, modeled after the role structure of a systematic macro CTA — now with a full orchestration layer that chains agents together automatically.
+
+## Primary Entry Point — Orchestrated Pipeline
+
+For any operational decision (trade, signal, rebalance, roll), use `/run-pipeline` as the default entry point. The pipeline executes the full agent stack in the correct order, passes outputs between agents via the shared context bus, enforces hard gates (compliance and drawdown), and produces a unified Pipeline Report with the final actionable instruction.
+
+```
+/run-pipeline Long 2% NAV ES futures, trend signal fires on 20-day breakout
+/run-pipeline Adding EM FX carry basket, 3% NAV, 6 positions equally weighted
+/run-pipeline Roll front-month CL to M+1, current position 1.5% NAV long
+```
+
+The pipeline eliminates copy-paste between agents. Regime state from the classifier flows automatically into risk, macro, and signal analysis. Portfolio optimizer outputs feed rebalancer and order router. Audit logger gates final execution. Every step is logged.
+
+## Orchestration Layer
+
+| File | Purpose |
+|---|---|
+| `orchestrator/pipeline.md` | Execution graph: agent order, dependencies, bus read/write contracts |
+| `orchestrator/context-bus.md` | Shared context bus schema — the single source of truth between agent calls |
+| `orchestrator/halt-protocol.md` | Hard halt and soft halt definitions, override procedures, escalation levels |
+| `.claude/commands/run-pipeline.md` | The `/run-pipeline` slash command |
+
+### Pipeline Execution Order
+
+```
+Stage 0: Bus initialization (context/portfolio-state.md + context/risk-limits.md)
+Stage 1: regime-classifier → writes REGIME_STATE to bus
+Stage 2: compliance (hard gate) → drawdown-monitor (hard gate)
+Stage 3: risk-officer + macro-analyst + kalshi-reader [parallel]
+Stage 4: signal-researcher [if signal-related submission]
+Stage 5: portfolio-optimizer → writes target weights to bus
+Stage 6: rebalancer + order-router [parallel, read from bus]
+Stage 7: audit-logger (final gate — execution withheld until COMPLETE)
+Stage 8: unified Pipeline Report
+```
+
+### Halt Behavior
+
+- **HARD HALT** (compliance VIOLATION or drawdown HALT): pipeline stops entirely, all pending agents cancelled, no execution instructions issued, PM notified with exact reason
+- **SOFT HALT** (risk-officer BLOCKED, signal BLOCK, rebalance UNECONOMIC, audit INCOMPLETE): pipeline pauses, issue surfaced, PM may override with documented rationale — override auto-logged to audit record
+
+## Individual Agent Commands (Diagnostic Use)
+
+Individual slash commands remain available for targeted analysis outside the pipeline — for debugging a specific domain, understanding a single agent's verdict, or running a quick check that doesn't require the full stack.
 
 ## Framework Overview
 
@@ -65,18 +109,25 @@ Each agent is a skeptic, not an assistant. They exist to surface failure modes, 
 ## Directory Structure
 
 ```
+orchestrator/         # Orchestration layer: pipeline spec, context bus schema, halt protocol
 agents/               # Agent persona definitions
 context/              # Shared fund context (mandate, limits, portfolio state)
-.claude/commands/     # Slash commands that invoke each agent
+.claude/commands/     # Slash commands — /run-pipeline (primary) and individual agent commands
 ```
 
 ## Usage
 
 1. Update `context/` files with your fund's actual mandate, limits, and current portfolio state.
-2. Invoke an agent with a slash command followed by your decision or question.
-3. The agent challenges the decision from its domain perspective.
+2. Use `/run-pipeline <decision>` as the primary entry point for any trade, signal, rebalance, or roll decision. The pipeline runs the full agent stack in the correct order and produces a unified Pipeline Report.
+3. Use individual agent slash commands for targeted diagnostic analysis outside the pipeline.
 
-Example:
+Example (pipeline — preferred):
+```
+/run-pipeline Long 2% NAV ES futures as trend signal fires on 20-day breakout
+/run-pipeline Adding EM FX carry basket, 3% NAV, 6 positions equally weighted
+```
+
+Example (individual agents — diagnostic):
 ```
 /risk Long 2% NAV ES futures as trend signal fires on 20-day breakout
 /crucible Adding EM FX carry basket, 3% NAV, 6 positions equally weighted
