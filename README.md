@@ -6,6 +6,45 @@ Crucible is a 30-agent, 5-layer AI framework that challenges every fund decision
 
 ---
 
+## How It Works
+
+**`/run-pipeline` is the primary entry point for all trade, signal, rebalance, and roll decisions.** One command executes the full agent stack in the correct order, passes outputs between agents automatically via the context bus, and produces a unified Pipeline Report with the final actionable instruction.
+
+```
+/run-pipeline Long 2% NAV ES futures, trend signal fires on 20-day breakout
+/run-pipeline Adding EM FX carry basket, 3% NAV, 6 positions equally weighted
+/run-pipeline Roll front-month CL to M+1, current position 1.5% NAV long
+```
+
+### Context Bus
+
+The context bus (`orchestrator/context-bus.md`) is the shared state between all agents in the pipeline. `regime-classifier` writes `REGIME_STATE` to the bus at Stage 1; every downstream agent reads it. `portfolio-optimizer` writes target weights at Stage 5; `rebalancer` and `order-router` consume them at Stage 6. Outputs flow automatically — no copy-paste between agents.
+
+### Execution Graph
+
+The pipeline runs in 8 stages with parallel execution at Stage 3:
+
+```
+Stage 0  Bus init — loads portfolio-state.md + risk-limits.md
+Stage 1  regime-classifier → writes REGIME_STATE to bus
+Stage 2  compliance (hard gate) → drawdown-monitor (hard gate)
+Stage 3  risk-officer + macro-analyst + kalshi-reader  [parallel]
+Stage 4  signal-researcher  [if signal-related submission]
+Stage 5  portfolio-optimizer → writes target weights to bus
+Stage 6  rebalancer + order-router  [parallel]
+Stage 7  audit-logger  [final gate — execution withheld until COMPLETE]
+Stage 8  unified Pipeline Report
+```
+
+### Halt Behavior
+
+Halt behavior is enforced automatically — no manual stage skipping.
+
+- **HARD HALT** — compliance `VIOLATION` or drawdown `HALT`: pipeline stops entirely, all pending stages cancelled, no execution instructions issued
+- **SOFT HALT** — risk `BLOCKED`, signal `BLOCK`, rebalance `UNECONOMIC`, or audit `INCOMPLETE`: pipeline pauses, issue surfaced to PM, override auto-logged to audit record
+
+---
+
 ## The Stack
 
 ```
@@ -139,6 +178,8 @@ Crucible is a 30-agent, 5-layer AI framework that challenges every fund decision
 
 ### 1. The Full Pre-Trade Gauntlet
 
+> **Use `/run-pipeline [trade description]`.** The pipeline runs the entire sequence below automatically in the correct order. Use individual commands only for targeted diagnostic analysis outside the pipeline.
+
 *Run before entering any new position. Every step is a gate — if it blocks, stop.*
 
 ```
@@ -180,6 +221,8 @@ Route the cleared order. OUTSIZED ORDER — HALT means the size needs to come do
 
 ### 2. Morning Briefing
 
+> **Use individual commands.** Morning briefing agents are monitoring and orientation tools, not a trade entry decision. `/run-pipeline` applies once a specific trade or position change is identified.
+
 *Three-agent sequence to orient a PM at market open. Run before reviewing positions or making decisions.*
 
 ```
@@ -200,6 +243,8 @@ Prediction market consensus check. HIGH SIGNAL means the market's implied probab
 ---
 
 ### 3. New Signal Onboarding
+
+> **Hybrid.** Use individual commands for research stages 1–5 (signal-generator through decay-tracker). Once the signal is validated and ready for governance review, use `/run-pipeline [signal description + backtest results]` for the final governance and execution gate.
 
 *The research layer sequence to validate a new alpha idea before it touches capital. Do not skip steps.*
 
@@ -237,6 +282,8 @@ Full governance review: statistical significance, overfitting exposure, regime r
 
 ### 4. Drawdown Response Protocol
 
+> **Use individual commands.** Drawdown response is a diagnostic and assessment sequence. `/run-pipeline` applies when assessment is complete and you are ready to enter, reduce, or exit a specific position.
+
 *The sequence to run when the fund is in drawdown. Sequence matters — assess before acting.*
 
 ```
@@ -267,6 +314,8 @@ Reassess the full portfolio risk profile in the current drawdown context. The pr
 ---
 
 ### 5. Strategy Deployment Checklist
+
+> **Hybrid.** Use individual commands for pre-deployment research and validation (backtest-designer through decay-tracker). Use `/run-pipeline [strategy + first trade description]` for the final governance and execution gate before the first trade goes live.
 
 *The sequence before pushing a new strategy to live capital. This is the one-way door — every step is mandatory.*
 
@@ -308,6 +357,8 @@ Gate on pre-trade record completeness for the first trade. The strategy is not d
 ---
 
 ### 6. End of Month Close
+
+> **Use individual commands.** Month-end close is an operational reporting sequence. `/run-pipeline` applies to any trade or position change decisions made during the close process, not to the reporting workflow itself.
 
 *The ops sequence for LP reporting, NAV verification, and audit trail. Run in this order.*
 
@@ -400,6 +451,11 @@ crucible-cio-team/
 ├── CLAUDE.md                        # Project instructions
 ├── README.md                        # This file
 │
+├── orchestrator/                    # Orchestration layer
+│   ├── pipeline.md                  # Execution graph: agent order, dependencies, bus contracts
+│   ├── context-bus.md               # Shared context bus schema
+│   └── halt-protocol.md             # Hard/soft halt definitions and override procedures
+│
 ├── agents/                          # 30 agent persona definitions
 │   │
 │   │   — Layer 0: Governance —
@@ -444,6 +500,7 @@ crucible-cio-team/
 │
 ├── .claude/
 │   └── commands/                    # 31 slash commands
+│       ├── run-pipeline.md          # Primary entry point — full pipeline orchestration
 │       ├── crucible.md              # Full panel meta-command (Layer 0)
 │       ├── compliance.md
 │       ├── risk.md
