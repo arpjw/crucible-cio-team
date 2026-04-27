@@ -52,7 +52,7 @@ Agents are grounded in three context files you populate with your fund's actual 
 
 **1. Clone the repo**
 ```bash
-git clone https://github.com/YOUR_USERNAME/crucible-cio-team.git
+git clone https://github.com/arpjw/crucible-cio-team.git
 cd crucible-cio-team
 ```
 
