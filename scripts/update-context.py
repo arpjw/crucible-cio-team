@@ -410,52 +410,34 @@ def write_macro_state(output_path: Path) -> None:
 
 # ── IBKR ──────────────────────────────────────────────────────────────────────
 
-def write_portfolio_state(output_path: Path) -> None:
-    ts = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
+def sync_ibkr(output_path: Path) -> None:
+    """Run sync-ibkr.py as a subprocess. Failure is non-fatal — pipeline continues.
+
+    sync-ibkr.py handles its own fallback: if IBKR is unreachable it appends
+    a staleness warning to the last known portfolio-state.md rather than
+    leaving it blank.
+    """
+    sync_script = PROJECT_ROOT / "scripts" / "sync-ibkr.py"
     try:
-        from ib_insync import IB, util
-        util.patchAsyncio()
-        ib = IB()
-        host = os.environ.get("IBKR_HOST", "127.0.0.1")
-        port = int(os.environ.get("IBKR_PORT", "7497"))
-        client_id = int(os.environ.get("IBKR_CLIENT_ID", "10"))
-
-        log.info(f"Connecting to IBKR at {host}:{port}...")
-        ib.connect(host, port, clientId=client_id, timeout=15)
-
-        lines = [
-            "# Portfolio State\n",
-            f"*Updated: {ts}*\n",
-            "\n## Account Summary\n",
-        ]
-        tags = {item.tag: item for item in ib.accountSummary()}
-        for tag in ("NetLiquidation", "TotalCashValue", "GrossPositionValue", "MaintMarginReq"):
-            if tag in tags:
-                lines.append(f"- **{tag}**: {tags[tag].value} {tags[tag].currency}")
-                log.info(f"  {tag}: {tags[tag].value}")
-
-        positions = ib.positions()
-        lines.append("\n## Open Positions\n")
-        if positions:
-            for pos in positions:
-                c = pos.contract
-                lines.append(
-                    f"- **{c.symbol}** ({c.secType}): "
-                    f"size={pos.position} | avg_cost={pos.avgCost:.4f}"
-                )
-                log.info(f"  {c.symbol}: {pos.position} @ {pos.avgCost:.4f}")
-        else:
-            lines.append("*No open positions*")
-
-        ib.disconnect()
-        output_path.write_text("\n".join(lines) + "\n")
-        log.info(f"[IBKR] Written to {output_path}")
-
-    except Exception as e:
-        log.warning(f"IBKR unavailable: {e}")
-        output_path.write_text(
-            f"# Portfolio State\n\n*IBKR unavailable at {ts}: {e}*\n"
+        result = subprocess.run(
+            [sys.executable, str(sync_script)],
+            capture_output=True,
+            text=True,
+            timeout=60,
+            cwd=str(PROJECT_ROOT),
         )
+        for line in result.stdout.strip().splitlines():
+            log.info(f"[sync-ibkr] {line}")
+        if result.returncode != 0:
+            log.warning(f"[sync-ibkr] exited {result.returncode}")
+            if result.stderr.strip():
+                log.warning(f"[sync-ibkr] {result.stderr.strip()}")
+        else:
+            log.info(f"[IBKR] Position sync complete → {output_path}")
+    except subprocess.TimeoutExpired:
+        log.warning("[sync-ibkr] timed out after 60s — IBKR likely unreachable")
+    except Exception as e:
+        log.warning(f"[sync-ibkr] failed to launch: {e}")
 
 
 # ── Kalshi ────────────────────────────────────────────────────────────────────
@@ -533,7 +515,7 @@ def main() -> None:
     log.info("=== Crucible context pipeline starting ===")
 
     write_macro_state(context_dir / "macro-state.md")
-    write_portfolio_state(context_dir / "portfolio-state.md")
+    sync_ibkr(context_dir / "portfolio-state.md")
     write_kalshi_state(context_dir / "kalshi-state.md")
 
     elapsed = (datetime.utcnow() - start).total_seconds()

@@ -223,3 +223,55 @@ ib.disconnect()
 
 **Cause**: IBKR performs weekly system resets Sunday night ET.
 **Fix**: Schedule your pipeline to avoid the 11:30 PM – 12:15 AM ET window. Gateway reconnects automatically after the reset if auto-restart is configured.
+
+---
+
+## 10. Automated Position Sync
+
+`scripts/sync-ibkr.py` is Crucible's read-only position bridge. It connects to IBKR, pulls live positions and account summary, and writes a structured `context/portfolio-state.md` that agents read at invocation time.
+
+### What it writes
+
+```
+context/portfolio-state.md
+  ├── Account Summary   — NAV, cash, gross exposure, leverage, margin utilization
+  ├── Open Positions    — markdown table: symbol, qty, avg cost, mkt price, mkt value, unr. P&L
+  ├── Risk Clusters     — auto-classified into Equity Beta / Rates / FX / Commodity
+  └── Position Hash     — MD5 of sorted positions; changes on any fill or unwind
+```
+
+### How to test it
+
+```bash
+# Step 1 — verify the connection is healthy
+python scripts/verify-ibkr.py
+
+# Step 2 — run a full sync and inspect the output
+python scripts/sync-ibkr.py && cat context/portfolio-state.md
+```
+
+`verify-ibkr.py` prints connection status, port, masked account number (last 4 digits only), NAV, and position count. Exits 1 on failure.
+
+### IBKR Gateway configuration required
+
+Before `sync-ibkr.py` can connect, TWS or IB Gateway must be configured:
+
+1. Open TWS → **Edit → Global Configuration → API → Settings**
+2. **Check: Enable ActiveX and Socket Clients** — required for any API connection
+3. **Set Socket Port**: 7497 for paper trading, 7496 for live
+4. **Trusted IP Addresses**: add `127.0.0.1` (localhost) — IBKR refuses non-whitelisted IPs silently
+5. **Uncheck: Read-Only API** — required for position data to flow; the bridge is read-only by design but IBKR's read-only flag blocks the data subscription
+
+### Fallback behavior
+
+If IBKR is unreachable, `sync-ibkr.py` preserves the last known `portfolio-state.md` and appends:
+
+```
+⚠ IBKR CONNECTION FAILED — showing last known state as of {timestamp}
+```
+
+Agents will see the warning and treat portfolio data as potentially stale. The file is never left blank.
+
+### Called automatically by the pipeline
+
+`scripts/update-context.py` calls `sync-ibkr.py` as a subprocess after the FRED pull. An IBKR failure does not block FRED or Kalshi data — the pipeline logs the error and continues.

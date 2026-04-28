@@ -4,13 +4,42 @@ How to wire FRED, Norgate, Kalshi, and IBKR into a single daily pipeline that ke
 
 ---
 
+## Data Sources
+
+Four external sources feed three context files. `scripts/update-context.py` orchestrates all four in sequence each morning.
+
+```
+  ┌──────────────────────┐
+  │   FRED API           │──────────────────────────────────────────────┐
+  │   20 macro series    │                                              │
+  └──────────────────────┘                                              ▼
+                                                          context/macro-state.md
+  ┌──────────────────────┐                               (Policy, Yield Curve,
+  │   Norgate            │──────────────────────────────▶ Inflation, Growth,
+  │   Futures prices     │                                Credit, Sentiment,
+  └──────────────────────┘                                Liquidity, Regime
+                                                          Signal Summary)
+
+  ┌──────────────────────┐
+  │   IBKR Gateway/TWS   │──────────────────────────────▶ context/portfolio-state.md
+  │   Live positions     │                               (NAV, positions table,
+  └──────────────────────┘                                risk clusters, hash)
+
+  ┌──────────────────────┐
+  │   Kalshi             │──────────────────────────────▶ context/kalshi-state.md
+  │   Prediction markets │                               (market probabilities,
+  └──────────────────────┘                                regime weights)
+```
+
+FRED and Norgate are non-blocking — Norgate is skipped gracefully if not installed. IBKR failure falls back to last known state with a staleness warning. Kalshi is skipped if no API key is configured.
+
 ## What the Pipeline Produces
 
 | File | Source | Updated By |
 |------|--------|-----------|
-| `context/macro-state.md` | FRED + Norgate | FRED series + futures price summary |
-| `context/portfolio-state.md` | IBKR | Live positions, NAV, cash |
-| `context/kalshi-state.md` | Kalshi | Prediction market probabilities |
+| `context/macro-state.md` | FRED + Norgate | 20 FRED series + optional futures prices + regime signal summary |
+| `context/portfolio-state.md` | IBKR | Live positions, NAV, gross leverage, risk clusters, position hash |
+| `context/kalshi-state.md` | Kalshi | Prediction market probabilities and regime weights |
 
 After a successful run, Claude Code sessions start with agents that already have live data. Without this pipeline, agents operate on manually-maintained context files — still useful, but not live.
 
