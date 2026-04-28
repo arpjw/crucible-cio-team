@@ -74,6 +74,21 @@ Institutional expertise roles. Run for targeted domain reviews or periodic fund 
 | General Counsel | `/general-counsel` | Legal and regulatory: exemption currency, horizon scanning, trade legal risk, counterparty agreements, litigation |
 | Head of Trading | `/head-of-trading` | Execution quality: broker scorecard, commission audit, prime broker fit, execution strategy, market structure risk |
 
+## Layer 0 Extension — Deep Fund Functions
+
+Specialized institutional functions separating top-tier systematic funds from the rest. Run for targeted domain reviews outside the standard pipeline.
+
+| Agent | Slash Command | Domain |
+|---|---|---|
+| Alternative Data Analyst | `/alternative-data-analyst` | Data edge validation: four-tier source classification, MNPI / ToS / anonymization legality audit, McLean & Pontiff half-life estimation, data quality (survivorship, revision schedules), break-even AUM ROI |
+| Derivatives Desk | `/derivatives-desk` | Options, swaps, and structured products: IV/RV ratio pricing, minimum variance hedge ratio, OTC audit (CVA, ISDA hard block), portfolio net Greeks, 90-day expiration risk calendar |
+| Securities Lending | `/securities-lending` | Short selling infrastructure: borrow cost classification (GC/warm/hot/special), locate availability, recall risk monitoring, dividend exposure, short squeeze scenario and portfolio P&L impact |
+| Factor Attribution | `/factor-attribution` | Return decomposition: Fama-French 5-factor + momentum + carry regression, factor exposure drift, HHI concentration, factor-regime mismatch (cross-references REGIME_STATE), passive replication test |
+| Capital Allocator | `/capital-allocator` | Multi-strategy risk budget: risk parity + mean-variance optimization, cross-strategy correlation monitoring, pod Sharpe attribution, REALLOCATE/WATCH/SHUTDOWN decisions, aggregate capacity ceiling |
+| Counterparty Risk | `/counterparty-risk` | Institutional credit exposure: prime broker concentration and rehypothecation, OTC CVA (EAD × PD × LGD), clearing house adequacy, settlement and Herstatt risk, Lehman-style PB failure scenario |
+| ESG Analyst | `/esg-analyst` | Institutional ESG compliance: exclusion list hard block (weapons/coal/OFAC), MSCI ESG score (BBB threshold), WACI carbon intensity (150 tCO2e/$M threshold), governance red flags, LP mandate compatibility |
+| Business Development | `/business-development` | LP capital development: pipeline health (45-day stall detection), LP concentration audit, 10-item raise readiness gate, emerging manager program qualification, 12-point institutional pitch scoring |
+
 ## Layer 0 — Decision Review Agents
 
 | Agent | Slash Command | Domain |

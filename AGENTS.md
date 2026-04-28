@@ -98,6 +98,23 @@ Institutional expertise roles. These agents model the specialized knowledge doma
 
 ---
 
+## Layer 0 Extension — Deep Fund Functions
+
+Specialized institutional functions separating top-tier systematic funds from the rest. Run for targeted domain reviews: alternative data sourcing, derivatives risk, short selling infrastructure, factor attribution, multi-strategy capital allocation, counterparty credit, ESG compliance, and LP capital development.
+
+| Agent | Command | Function | Key Output |
+|---|---|---|---|
+| Alternative Data Analyst | `/alternative-data-analyst` | Evaluates data source differentiation (four-tier classification), legality (MNPI, ToS, anonymization), signal half-life via McLean & Pontiff decay model, data quality (survivorship, look-ahead from revision schedules), and break-even AUM ROI. | `DIFFERENTIATED EDGE \| COMMODITIZED EDGE \| SHORT RUNWAY \| LEGAL REVIEW REQUIRED` |
+| Derivatives Desk | `/derivatives-desk` | Evaluates options overlays (IV/RV ratio, Greeks, breakeven), minimum variance hedge ratio (h* = ρσ_spot/σ_futures), OTC audit (CVA, ISDA hard block, margin), portfolio net Greeks, and 90-day expiration calendar. | `HEDGE APPROVED \| OVERPRICED HEDGE \| UNDERHEDGED \| HARD BLOCK` |
+| Securities Lending | `/securities-lending` | Audits short selling infrastructure: borrow cost (GC/warm/hot/special classification, adjusted Sharpe), locate availability (SI%, DTC, institutional ownership), recall risk, dividend exposure, and short squeeze scenario with portfolio P&L impact. | `SHORT APPROVED \| BORROW COST DRAG \| LOCATE RISK HIGH \| RECALL IMMINENT \| SHORT UNECONOMIC` |
+| Factor Attribution | `/factor-attribution` | Decomposes returns via Fama-French 5-factor + momentum + carry regression (R² > 70% = ALPHA ILLUSION), monitors factor loading drift (>0.3 shift), HHI factor concentration, factor-regime mismatch from REGIME_STATE, and passive replication test (>80% = REPLICABLE BY PASSIVE). | `ALPHA CONFIRMED \| ALPHA ILLUSION \| FACTOR DRIFT \| FACTOR-REGIME MISMATCH \| REPLICABLE BY PASSIVE` |
+| Capital Allocator | `/capital-allocator` | Allocates risk budget across strategies (risk parity + mean-variance, flags >30% deviation), monitors cross-strategy P&L correlation (spikes >0.6), evaluates pod Sharpe (<0.3 for two quarters = UNDERPERFORMING), issues REALLOCATE/WATCH/SHUTDOWN decisions, and monitors aggregate capacity ceiling. | `OPTIMALLY ALLOCATED \| MISALLOCATED \| REBALANCE REQUIRED \| STRATEGY SHUTDOWN RECOMMENDED` |
+| Counterparty Risk | `/counterparty-risk` | Maps prime broker concentration (>60% = flag, full rehypothecation = flag), computes OTC CVA (EAD × PD × LGD, >0.5% NAV = flag, no ISDA = HARD BLOCK), assesses clearing house default fund adequacy, monitors settlement fails and Herstatt FX risk, and models Lehman-style PB failure NAV impact. | `COUNTERPARTY EXPOSURE CLEAN \| CONCENTRATION WARNING \| ELEVATED COUNTERPARTY RISK \| HARD BLOCK` |
+| ESG Analyst | `/esg-analyst` | Screens exclusion list (weapons, tobacco, coal >30% revenue, OFAC — HARD BLOCK on breach), computes portfolio-weighted MSCI ESG score (< BBB = POOR), calculates WACI carbon intensity (>150 tCO2e/$M = HIGH), audits governance red flags (3+ = GOVERNANCE RISK), and checks LP ESG mandate compatibility. | `ESG COMPLIANT \| EXCLUSION LIST BREACH \| POOR ESG EXPOSURE \| HIGH CARBON INTENSITY \| LP ESG INCOMPATIBILITY` |
+| Business Development | `/business-development` | Audits LP pipeline (>45 days in same stage = STALLING), LP base concentration (>20% single LP = HIGH CONCENTRATION), capital raise readiness gate (10 required items), emerging manager program qualification (Fidelity, Schwab, iCapital, Deutsche Bank), and pitch effectiveness (12-point LP checklist, <3.5/5.0 = NOT READY). | `RAISE READY \| RAISE NOT READY \| PIPELINE HEALTHY \| PIPELINE STALLING` |
+
+---
+
 ## Verdict Reference
 
 | Verdict / Stamp | Agent | Meaning |
