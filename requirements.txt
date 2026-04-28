@@ -1,0 +1,6 @@
+ib_insync==0.9.86
+pandas==2.1.4
+requests==2.31.0
+python-dotenv==1.0.0
+schedule==1.2.1
+fredapi==0.5.1

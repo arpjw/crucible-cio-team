@@ -1,5 +1,7 @@
 # Crucible CIO Team
 
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/arpjw/crucible-cio-team)
+
 **Adversarial AI for systematic fund managers.**
 
 Crucible is a 37-agent, 6-layer AI framework that challenges every fund decision before execution. It is not an assistant — it is an adversary. Five governance agents independently stress-test trades from compliance, risk, macro, signal, and systems perspectives, producing a binding panel verdict of GO, CONDITIONAL GO, or NO-GO. Ten operations agents run continuously to monitor drawdowns, data feeds, margin, NAV, and LP obligations. Four intelligence agents track regime state, positioning crowding, news sentiment, and earnings risk. Six research agents validate new signals from hypothesis through backtest spec, factor exposure, capacity, and decay. Five execution agents route orders, monitor slippage, reconcile positions, manage rolls, and generate rebalance trade lists. Every agent has explicit formulas, hard thresholds, and machine-readable output — not open-ended questions.

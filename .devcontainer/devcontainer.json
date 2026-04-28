@@ -1,0 +1,13 @@
+{
+  "name": "Crucible CIO Team",
+  "build": { "dockerfile": "Dockerfile" },
+  "postCreateCommand": "pip install -r requirements.txt && npm install -g @anthropic-ai/claude-code && python db/init.py",
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-python.python", "GitHub.copilot"],
+      "settings": { "python.defaultInterpreterPath": "/usr/local/bin/python" }
+    }
+  },
+  "forwardPorts": [],
+  "remoteEnv": { "PYTHONPATH": "/workspaces/crucible-cio-team" }
+}
