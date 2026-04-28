@@ -17,6 +17,7 @@ venv/
 # Environment variables
 .env
 .env.*
+!.env.template
 
 # macOS
 .DS_Store
@@ -25,3 +26,6 @@ venv/
 .idea/
 .vscode/
 *.swp
+
+# Logs — ignore log files but track directory via .gitkeep
+logs/*.log

@@ -14,6 +14,15 @@ Execute the following stages in order. Do not skip stages. Do not run a stage be
 
 ### STAGE 0 — Bus Initialization
 
+**Macro data staleness check:** Before reading any context files, check the `_Updated:` timestamp on the first two lines of `context/macro-state.md`. If the file does not exist, or if the timestamp is more than 24 hours old, surface this warning and do not proceed until acknowledged:
+
+```
+⚠ MACRO DATA STALE — run scripts/update-context.py before proceeding.
+Continuing with stale data may produce inaccurate regime classifications.
+```
+
+If the file is fresh (within 24 hours), proceed silently.
+
 Initialize the context bus:
 
 1. Read `context/portfolio-state.md` → populate `PORTFOLIO_STATE` and `RISK_HEADROOM` (base limits)

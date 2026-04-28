@@ -191,9 +191,57 @@ Edit with: `crontab -e`
 
 ---
 
+## 6. Cron Setup
+
+Set up a cron job to pull fresh FRED data each trading morning before your Claude Code sessions.
+
+**Create the logs directory first (one-time):**
+
+```bash
+mkdir -p /path/to/crucible-cio-team/logs
+```
+
+The `logs/` directory is already in `.gitignore` — only `logs/.gitkeep` is committed.
+
+**macOS (crontab):**
+
+```bash
+# Edit crontab
+crontab -e
+
+# Add this line — runs at 6:30 AM Mon-Fri
+30 6 * * 1-5 cd /path/to/crucible-cio-team && python scripts/update-context.py >> logs/update-context.log 2>&1
+```
+
+**Linux (crontab):**
+
+```bash
+# Edit crontab
+crontab -e
+
+# Add this line — runs at 6:30 AM Mon-Fri
+30 6 * * 1-5 cd /path/to/crucible-cio-team && python scripts/update-context.py >> logs/update-context.log 2>&1
+```
+
+**Verify the pipeline works:**
+
+```bash
+python scripts/update-context.py && cat context/macro-state.md
+```
+
+**Run the health check:**
+
+```bash
+python scripts/verify-fred.py
+```
+
+The verify script prints a status table for all 20 series (OK / STALE / FAILED) and exits with code 1 if any series cannot be fetched.
+
+---
+
 ## Notes
 
 - FRED data is typically available by 8:30 AM ET for series released that day. The 6:30 AM pull catches everything released the prior day.
 - Monthly series (CPI, PCE, unemployment) update on release days. Between releases, the value stays flat — this is expected.
 - The `VIXCLS` series on FRED is one day lagged. For same-day VIX, use your broker's market data feed.
-- Series that return `"."` in the observations array are missing values — `pd.to_numeric(..., errors="coerce")` converts these to `NaN` and `dropna` removes them.
+- Series that return `"."` in the observations array are missing values — the fetch function skips them and returns the most recent non-null observation.
