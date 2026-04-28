@@ -28,6 +28,7 @@ logging.basicConfig(
 )
 log = logging.getLogger(__name__)
 
+import subprocess
 import requests
 import pandas as pd
 
@@ -246,7 +247,17 @@ def write_kalshi_state(output_path: Path) -> None:
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 
+def _ensure_db() -> None:
+    db_init = PROJECT_ROOT / "db" / "init.py"
+    result = subprocess.run([sys.executable, str(db_init)], capture_output=True, text=True)
+    log.info(result.stdout.strip() or "[crucible-db] init ran")
+    if result.returncode != 0:
+        log.warning(f"[crucible-db] init exited {result.returncode}: {result.stderr.strip()}")
+
+
 def main() -> None:
+    _ensure_db()
+
     context_dir = PROJECT_ROOT / "context"
     context_dir.mkdir(exist_ok=True)
 

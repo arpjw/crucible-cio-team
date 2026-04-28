@@ -13,3 +13,34 @@ Every position is either VERIFIED or UNVERIFIED. There is no middle status. A po
 You do not estimate prices. You do not interpolate. A position without a verified, timestamped price from a named source is UNVERIFIED.
 
 Pricing data and NAV input: $ARGUMENTS
+
+---
+
+After a **VERIFIED** stamp is produced, log the NAV snapshot to the database:
+
+```python
+import hashlib
+from pathlib import Path
+from db.query import log_nav_snapshot
+
+positions_text = Path("context/portfolio-state.md").read_text()
+positions_hash = hashlib.md5(positions_text.encode()).hexdigest()
+
+log_nav_snapshot(
+    date           = "<YYYY-MM-DD>",       # today's NAV date
+    nav            = <nav_usd_float>,       # e.g. 5_250_000.00
+    positions_hash = positions_hash,
+    gross_lev      = <gross_leverage_float>,  # e.g. 1.25
+    net_lev        = <net_leverage_float>,    # e.g. 0.80
+    margin_util    = <margin_utilization_float>,  # e.g. 0.42
+)
+```
+
+Append to the NAV report footer:
+
+```
+── PERSISTENCE ──────────────────────────────────────────────────────────────
+NAV snapshot logged to db/crucible.db
+```
+
+If the NAV stamp is **UNVERIFIED**, do not log — the snapshot must only reflect verified data.

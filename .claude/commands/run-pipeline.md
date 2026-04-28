@@ -335,6 +335,50 @@ Missing:  [list, or NONE]
 
 Assemble and print the unified Pipeline Report. This is the final output of the pipeline.
 
+> **After printing the Pipeline Report**, log it to the database:
+>
+> ```python
+> from db.query import log_pipeline_run, log_agent_verdict
+>
+> run_id = log_pipeline_run(
+>     submission       = "$ARGUMENTS",
+>     verdicts_dict    = {
+>         "submission_type": "<SIGNAL|REBALANCE|ROLL|OPERATIONAL>",
+>         "compliance":      "<CLEAR|WARNING|VIOLATION>",
+>         "risk":            "<APPROVED|FLAGGED|BLOCKED>",
+>         "macro":           "<SUPPORTS|NEUTRAL|CONTRADICTS>",
+>         "signal":          "<PASS|FLAG|BLOCK|NOT_EVALUATED>",
+>     },
+>     final_verdict    = "<PROCEED|WITHHELD|HARD HALT>",
+>     override_log     = "<JSON string of any overrides, or None>",
+>     full_report      = "<full text of Stage 8 Pipeline Report>",
+> )
+>
+> # Log each agent's verdict individually
+> for agent, verdict, flags in [
+>     ("regime-classifier",   "<verdict>", "<flags or None>"),
+>     ("compliance-officer",  "<verdict>", "<flags or None>"),
+>     ("drawdown-monitor",    "<verdict>", "<flags or None>"),
+>     ("risk-officer",        "<verdict>", "<flags or None>"),
+>     ("macro-analyst",       "<verdict>", "<flags or None>"),
+>     ("kalshi-reader",       "<verdict>", "<flags or None>"),
+>     ("signal-researcher",   "<verdict>", "<flags or None>"),
+>     ("portfolio-optimizer", "<verdict>", "<flags or None>"),
+>     ("rebalancer",          "<verdict>", "<flags or None>"),
+>     ("order-router",        "<verdict>", "<flags or None>"),
+>     ("audit-logger",        "<verdict>", "<flags or None>"),
+> ]:
+>     log_agent_verdict(run_id, agent, verdict, flags=flags)
+> ```
+>
+> After logging, append to the Pipeline Report footer:
+>
+> ```
+> ── PERSISTENCE ──────────────────────────────────────────────────────────────
+> Pipeline run logged to db/crucible.db  (run_id: [run_id])
+> Run /calibration-report to see verdict trends over time.
+> ```
+
 ```
 ╔══════════════════════════════════════════════════════════════╗
 ║                    CRUCIBLE PIPELINE REPORT                   ║

@@ -1,0 +1,27 @@
+# Database — never commit live trading data
+db/crucible.db
+db/*.db
+db/*.db.bak
+
+# Audit and data exports
+exports/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# Environment variables
+.env
+.env.*
+
+# macOS
+.DS_Store
+
+# Editor
+.idea/
+.vscode/
+*.swp
